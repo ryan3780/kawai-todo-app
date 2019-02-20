@@ -1,25 +1,47 @@
-import React from 'react';
+import * as React from 'react';
 import { Text, View, StyleSheet, StatusBar, TextInput, Dimensions, Platform, ScrollView } from 'react-native';
+import { Constants } from 'expo';
+import { AppLoading } from 'expo';
 import ToDo from "./ToDo";
+import uuid from 'uuid/v1';
 
 const { height, width } = Dimensions.get("window");
+
+// You can import from local files
+import AssetExample from './components/AssetExample';
+
+// or any pure javascript modules available in npm
+import { Card } from 'react-native-paper';
 
 export default class App extends React.Component {
   state = {
     newToDo: "",
+    loadedToDos: false,
   }
+  componentDidMount = () => {
+    this._loadToDos();
+  }
+
   render() {
-    const { newToDo } = this.state;
+    const { newToDo, loadedToDos } = this.state;
+    if (!loadedToDos) {
+      return <AppLoading />
+    }
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
         <Text style={styles.title}>Kawai To Do</Text>
         <View style={styles.card}>
-          <TextInput style={styles.input} placeholder={"New To Do"} value={newToDo}
-            onChangeText={this._controllNewToDo} placeholderTextColor={"#999"}
-            autoCorrect={false} />
+          <TextInput style={styles.input}
+            placeholder={"New To Do"}
+            value={newToDo}
+            onChangeText={this._controllNewToDo}
+            placeholderTextColor={"#999"}
+            autoCorrect={false}
+            onSubmitEditing={this._addToDo}
+          />
           <ScrollView contentContainerStyle={styles.toDos}>
-            <ToDo />
+            <ToDo text={"Hello I'm a To Do"} />
           </ScrollView>
         </View>
       </View>
@@ -28,7 +50,27 @@ export default class App extends React.Component {
   _controllNewToDo = text => {
     this.setState({
       newToDo: text
+
     })
+  }
+  _loadToDos = () => {
+    this.setState({
+      loadedToDos: true
+    })
+  }
+  _addToDo = () => {
+    const { newToDo } = this.state;
+    if (newToDo !== "") {
+      this.setState({
+        newToDo: ""
+      })
+      this.setState(prevState => {
+        const ID = uuidv1();
+        const newToDoObject = {
+
+        }
+      })
+    }
   }
 }
 
@@ -36,8 +78,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    // paddingTop: Constants.statusBarHeight,
     backgroundColor: '#F23657',
+    // paddingTop: Constants.statusBarHeight,
 
   },
   title: {
